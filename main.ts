@@ -2,20 +2,20 @@ function sendData () {
     basic.showString("B")
     for (let värde of tmpListLF) {
         bluetooth.uartWriteValue("LF", värde)
-        counter_LF = counter_LF + 1
+/*        counter_LF = counter_LF + 1
         if (counter_LF == 100) {
             counter_LF = 0
             basic.pause(0)
-        }
+        }*/
     }
-    basic.pause(100)
-    for (let värde of tmpListRF) {
-        bluetooth.uartWriteValue("RF", värde)
-        counter_RF = counter_RF + 1
+    //basic.pause(100)
+    for (let värde2 of tmpListRF) {
+        bluetooth.uartWriteValue("RF", värde2)
+       /* counter_RF = counter_RF + 1
         if (counter_RF == 100) {
             counter_RF = 0
             basic.pause(0)
-        }
+        }*/
     }
     basic.showIcon(IconNames.Happy)
 }
@@ -68,15 +68,14 @@ function testSendData () {
 bluetooth.uartWriteLine(tmp)
     }
     bluetooth.uartWriteString("RF")
-    for (let varde of list_Right) {
-        let tmp = varde.toString();
-bluetooth.uartWriteLine(tmp)
+    for (let varde2 of list_Right) {
+        let tmp2 = varde2.toString();
+bluetooth.uartWriteLine(tmp2)
     }
 }
 bluetooth.onUartDataReceived(serial.delimiters(Delimiters.NewLine), function () {
-    basic.showString("C")
     start = 1
-    initCountdown()
+    sampleAndSendEvery10ms()
 })
 function startSampling () {
     while (bt_c == 0) {
@@ -97,11 +96,11 @@ function test () {
 }
 function testSampling () {
     for (let index = 0; index < 100; index++) {
-        var_LF = tmp2
+        var_LF = tmp22
         list_Left.push(var_LF)
-        var_RF = tmp2
+        var_RF = tmp22
         list_Right.push(var_RF)
-        tmp2 = tmp2 + 1
+        tmp22 = tmp22 + 1
     }
     counter = counter + 1
 }
@@ -119,11 +118,11 @@ function falseStart () {
 	
 }
 function initCountdown () {
-    for (let index = 0; index <= 2; index++) {
-        music.playTone(392, music.beat(BeatFraction.Half))
-        basic.showNumber(3 - index)
+    for (let index2 = 0; index2 <= 2; index2++) {
+        music.playTone(262, music.beat(BeatFraction.Half))
+        basic.showNumber(3 - index2)
     }
-    music.playTone(698, music.beat(BeatFraction.Whole))
+    music.playTone(262, music.beat(BeatFraction.Whole))
 }
 function reset () {
     list_Left = []
@@ -132,8 +131,24 @@ function reset () {
     number = 0
     counter = 0
 }
+function sampleAndSendEvery10ms () {
+    loops.everyInterval(10, function () {
+        if (start = 1) { 
+            if(counter < 3){
+                testSampling();
+                test();
+                sendData();
+            }else if(counter == 3){
+                basic.showIcon(IconNames.Yes)
+                bluetooth.uartWriteValue("D", 0)
+            }
+                
+        }
+        
+    })
+}
 function sampleToLists () {
-    for (let index = 0; index < 200; index++) {
+    for (let index = 0; index < 100; index++) {
         tmp_RF = invers - pins.analogReadPin(AnalogPin.P1)
         var_RF = k_RF * tmp_RF + m_RF
         list_Right.push(var_RF)
@@ -144,7 +159,7 @@ function sampleToLists () {
     counter = counter + 1
 }
 let number = 0
-let tmp2 = 0
+let tmp22 = 0
 let var_LF = 0
 let var_RF = 0
 let tmp_LF = 0
@@ -153,7 +168,6 @@ let list_Left: number[] = []
 let list_Right: number[] = []
 let g = 0
 let bt_c = 0
-let counter = 0
 let start = 0
 let invers = 0
 let m_RF = 0
@@ -164,6 +178,7 @@ let counter_RF = 0
 let tmpListRF: number[] = []
 let counter_LF = 0
 let tmpListLF: number[] = []
+let counter = 0
 initServices()
 initConstants()
 basic.showLeds(`
